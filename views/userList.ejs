@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User list</title>
+
+</head>
+
+
+<body>
+    <%- include("./navbar") %>
+    <h1>Manage database</h1>
+    <table>
+        <tr>
+            <th>name</th>
+            <th>lastname</th>
+            <th></th>
+            <th></th>
+        </tr>
+        <% for(i of name){ %>
+            <tr>
+                <td><a href="/user/<%= i._id %>">
+                        <%= i.name %>
+                    </a></td>
+                <td>
+                    <%= i.lastname %>
+                </td>
+                <td>
+                    <form action="/user/edit" method="POST">
+                        <input type="hidden" name="_id" value="<%= i._id %>">
+                        <input type="hidden" name="name" value="<%= i.name %>">
+                        <input type="hidden" name="lastname" value="<%= i.lastname %>">
+                        <button type="submit">แก้ไข</button>
+                    </form>
+                </td>
+                <td><a href="/delete/<%= i._id %>" onclick="return confirm('confirm to delete?')">delete</a></td>
+            </tr>
+            <% } %>
+    </table>
+    <br><br>
+    <h3><a href="/user/add">add user</a></h3><br>
+    <h3><a href="/">back</a></h3><br>
+
+
+</body>
+
+</html>

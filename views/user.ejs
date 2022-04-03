@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User info</title>
+    
+</head>
+<link rel="stylesheet" href="/css/style.css">
+<body>
+    <%- include("./navbar") %>
+    <h1>test individual user page</h1> <br>
+    <h2>ObjectID : <%= data[0]._id %> </h2>
+    <h2>Name : <%= data[0].name %> </h2>
+    <h2>Lastname : <%= data[0].lastname %></h2>
+
+</body>
+</html>
