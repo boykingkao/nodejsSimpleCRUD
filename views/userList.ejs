@@ -13,19 +13,22 @@
 <body>
     <%- include("./navbar") %>
     <h1>Manage database</h1>
-    <table>
+    <table style="max-width: 500px;">
         <tr>
+            <th>profile</th>
             <th>name</th>
             <th>lastname</th>
-            <th></th>
-            <th></th>
+            <th colspan="2">actions</th>
         </tr>
         <% for(i of name){ %>
+     
             <tr>
+                <td><a href="/user/<%= i._id %>"><img src="../images/profiles/<%= i.profile_image %>" onerror="this.src='../images/profiles/profile_default.jpg'" alt="" height="50" ></a></td>
+              
                 <td><a href="/user/<%= i._id %>">
                         <%= i.name %>
                     </a></td>
-                <td>
+                <td >
                     <%= i.lastname %>
                 </td>
                 <td>
@@ -33,10 +36,20 @@
                         <input type="hidden" name="_id" value="<%= i._id %>">
                         <input type="hidden" name="name" value="<%= i.name %>">
                         <input type="hidden" name="lastname" value="<%= i.lastname %>">
+                        <input type="hidden" name="profile_image" value="<%= i.profile_image %>">
                         <button type="submit">แก้ไข</button>
                     </form>
                 </td>
-                <td><a href="/delete/<%= i._id %>" onclick="return confirm('confirm to delete?')">delete</a></td>
+                <td>
+                    <form action="/delete/<%= i._id %>">
+                        <input type="hidden" name="_id" value="<%= i._id %>">
+                        <input type="hidden" name="name" value="<%= i.name %>">
+                        <input type="hidden" name="lastname" value="<%= i.lastname %>">
+                        <input type="hidden" name="profile_image" value="<%= i.profile_image %>">
+                        <button type="submit" onclick="return confirm('confirm to delete?')" >ลบข้อมูล</button>
+
+                </form></td>
+                
             </tr>
             <% } %>
     </table>

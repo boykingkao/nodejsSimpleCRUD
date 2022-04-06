@@ -7,13 +7,27 @@
     <title>User info</title>
     
 </head>
-<link rel="stylesheet" href="/css/style.css">
+
 <body>
     <%- include("./navbar") %>
-    <h1>test individual user page</h1> <br>
+    <h1>Profile page</h1> <br>
+
+
+    <img src="../images/profiles/<%= data[0].profile_image %>" onerror="this.src='../images/profiles/profile_default.jpg'" alt="" height="250">
+    
     <h2>ObjectID : <%= data[0]._id %> </h2>
     <h2>Name : <%= data[0].name %> </h2>
     <h2>Lastname : <%= data[0].lastname %></h2>
+
+    <form action="/user/edit" method="POST">
+        <input type="hidden" name="_id" value="<%= data[0]._id %>">
+        <input type="hidden" name="name" value="<%= data[0].name %>">
+        <input type="hidden" name="lastname" value="<%= data[0].lastname %>">
+        <input type="hidden" name="profile_image" value="<%= data[0].profile_image %>">
+        <button type="submit">Edit Profile</button>
+    </form>
+
+    <h3><a href="/">back</a></h3><br>
 
 </body>
 </html>

@@ -8,12 +8,26 @@ const path = require("path")
 
 const app = express()
 
+const fs = require("fs"); // for delete file
+///////////////////////////// upload profile
+
+const multer = require('multer')
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './images/profiles')
+    },
+    filename: (req, file, cb) => {
+        cb(null, 'profile_' + Date.now() + ".jpg")
+    }
+})
+const upload = multer({ storage: storage })
+/////////////////////////////
+
 testPage = path.join(__dirname, "views/path.ejs")
 
-var mongo = require('mongodb');
+
 
 const gohza = require('./demo_create_mongo_db');
-const { render, redirect } = require("express/lib/response");
 
 //อ้างอิงตำแหน่งไฟล์
 const gohPage = path.join(__dirname, "./views/goh.html")
@@ -22,6 +36,10 @@ app.set('view engine', 'ejs')
 
 app.use(express.urlencoded({ extended: false })) //จะทำให้รับค่าจากฟอร์มที่มี method = post ได้
 app.use("/css", express.static(__dirname + "/css")) //จะทำให้สามารถใช้ไฟล์ใน folder /css ได้ (html link css ได้)
+app.use('/images', express.static(__dirname + "/images"))
+
+
+
 app.get("/", (req, res) => {
 
     MongoClient.connect(url, async function (err, client) {
@@ -75,10 +93,10 @@ app.get("/user/add", function (req, res) {
     res.render('addform')
 })
 
-app.post("/insert", function (req, res) {
+app.post("/insert", upload.single('profile_image'), function (req, res) {
     res.redirect('/user/add')
-    gohza.add_user(req.body.name, req.body.lastname)
-    console.log(req.body)
+    gohza.add_user(req.body.name, req.body.lastname, req.file.filename)
+    console.log(req.file.filename)
 })
 ////////////////////////////////////
 
@@ -94,7 +112,13 @@ app.get("/user/:id", function (req, res) {
 })
 
 app.get("/delete/:id", function (req, res) {
-
+    //ลบไฟล์ เพื่อทำให้ไม่เปลืองพื้นที่
+    try {
+        fs.unlinkSync(`./images/profiles/${req.query.profile_image}`)
+    } catch(err){
+        console.log(err)
+    }
+    console.log(req.query.profile_image)
     gohza.delete_user(req.params.id)
     res.redirect("/user")
 
@@ -102,17 +126,33 @@ app.get("/delete/:id", function (req, res) {
 
 app.post("/user/edit", function (req, res) {
     console.log(req.body)
+    console.log(`=======================`)
     res.render("edituser", { data: req.body })
 
 })
 
-app.post("/update", function (req, res) {
-    console.log(req.body)
-    gohza.update_user(req.body)
+app.post("/update",upload.single('profile_image'), function (req, res) {
+    try{
+        var profile_image = req.file.filename
+        try {
+            fs.unlinkSync(`./images/profiles/${req.body.profile_image_old}`)
+        } catch(err){
+            console.log(err)
+        }
+        
+    }catch(err){
+        console.log("you didn't change profile unage")
+        var profile_image = req.body.profile_image_old
+        console.log("old file is : " + profile_image)
+    }
+    
+ 
+    gohza.update_user(req.body, profile_image) //เปลี่ยนข้อมูลของ user
     res.redirect("/user")
 })
 
 app.listen(3000, () => {
     console.log("started server at port 3000 succeed")
     console.log(__dirname, 'views')
+    console.log("http://localhost:3000/")
 })
