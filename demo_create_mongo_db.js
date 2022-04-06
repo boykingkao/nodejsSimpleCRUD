@@ -6,8 +6,8 @@ const url = "mongodb://localhost:27017/";
 function connect_db() {
   MongoClient.connect(url, function (err, client) {
     if (err) throw err;
-    var dbo = client.db("gohtest");
-    dbo.createCollection("testCreatecollection", function (err, res) {
+    var dbo = client.db("mydb");
+    dbo.createCollection("users", function (err, res) {
       if (err) throw err;
       console.log("Collection created!");
       db.close();
@@ -21,7 +21,7 @@ function add_user(name, lastname, filename) {
     console.log("Database connected...");
     //db.clsoe();
 
-    var dbo = client.db("gohtest"); //ชื่อ collection
+    var dbo = client.db("mydb"); //ชื่อ collection
     var obj = { name: `${name}`, lastname: `${lastname}`, profile_image: `${filename}` }
     dbo.collection("users").insertOne(obj, function (err, res) {
       if (err) throw err;
@@ -35,7 +35,7 @@ function delete_user(user_id) {
   MongoClient.connect(url, function (err, client) {
     if (err) throw err;
 
-    var dbo = client.db("gohtest")
+    var dbo = client.db("mydb")
 
     var query = { _id: new mongodb.ObjectId(user_id) }
 
@@ -53,7 +53,7 @@ function update_user(user,profile) {
   MongoClient.connect(url, function (err, client) {
     if (err) throw err;
 
-    var dbo = client.db("gohtest")
+    var dbo = client.db("mydb")
 
     var query = { _id: new mongodb.ObjectId(user._id) }
     var new_value = { $set: { name: user.name, lastname: user.lastname, profile_image: profile } }

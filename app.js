@@ -43,7 +43,7 @@ app.use('/images', express.static(__dirname + "/images"))
 app.get("/", (req, res) => {
 
     MongoClient.connect(url, async function (err, client) {
-        var dbo = client.db("gohtest");
+        var dbo = client.db("mydb");
         var dbdata = await dbo.collection("users").find({}).sort({ name: -1 }).toArray()
         res.render("index", { name: dbdata })
         client.close()
@@ -56,7 +56,7 @@ app.get("/", (req, res) => {
 
 app.get("/user", function (req, res) {
     MongoClient.connect(url, async function (err, client) {
-        var dbo = client.db("gohtest");
+        var dbo = client.db("mydb");
         var dbdata = await dbo.collection("users").find({}).sort({ name: -1 }).toArray()
         res.render("userList", { name: dbdata })
         client.close()
@@ -102,7 +102,7 @@ app.post("/insert", upload.single('profile_image'), function (req, res) {
 
 app.get("/user/:id", function (req, res) {
     MongoClient.connect(url, async function (err, client) {
-        var dbo = client.db("gohtest");
+        var dbo = client.db("mydb");
         var dbdata = await dbo.collection("users").find({ _id: new mongodb.ObjectId(req.params.id) }).sort({ name: -1 }).toArray()
         res.render("user", { data: dbdata })
         console.log(dbdata)
@@ -149,6 +149,10 @@ app.post("/update",upload.single('profile_image'), function (req, res) {
  
     gohza.update_user(req.body, profile_image) //เปลี่ยนข้อมูลของ user
     res.redirect("/user")
+})
+
+app.get("/about_me", (req,res) => {
+    res.render("aboutMe")
 })
 
 app.listen(3000, () => {
