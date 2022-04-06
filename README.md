@@ -1,7 +1,7 @@
 # node.js CRUD System
 
 # Demo
-[link](https://www.youtube.com/watch?v=_B1H6XevrVA)
+[คลิป Demo](https://www.youtube.com/watch?v=_B1H6XevrVA)
 ## Requirements
 ### ต้องติดตั้ง MongoDBcompass และ
 #### - สร้าง Database "mydb"
