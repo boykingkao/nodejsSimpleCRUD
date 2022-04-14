@@ -3,9 +3,7 @@
 # Demo
 [link](https://www.youtube.com/watch?v=_B1H6XevrVA)
 ## Requirements
-### ต้องติดตั้ง MongoDBcompass และ
-#### - สร้าง Database "mydb"
-#### - สร้าง Collection "users"
+### ต้องติดตั้ง MongoDBcompass 
 
 ## Functions 
 ### เชื่อมต่อ MongoDB

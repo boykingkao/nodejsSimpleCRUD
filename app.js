@@ -23,11 +23,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 /////////////////////////////
 
-testPage = path.join(__dirname, "views/path.ejs")
+const User = require("./users_mongo");
 
-
-
-const gohza = require('./demo_create_mongo_db');
 
 //อ้างอิงตำแหน่งไฟล์
 const gohPage = path.join(__dirname, "./views/goh.html")
@@ -54,20 +51,25 @@ app.get("/", (req, res) => {
 
 })
 
-app.get("/user", function (req, res) {
-    MongoClient.connect(url, async function (err, client) {
-        var dbo = client.db("mydb");
-        var dbdata = await dbo.collection("users").find({}).sort({ name: -1 }).toArray()
-        res.render("userList", { name: dbdata })
-        client.close()
-    })
+app.get("/user", async function (req, res) {
+
+    const data = await User.find().sort({ name: -1 });
+    res.render("userList", { name: data })
+
     console.log("users list page")
 
 })
 
 app.get("/test", (req, res) => {
-    res.render("test")
-    //res.sendFile(test)
+    let data = new User({
+        name: "testName",
+        lastname: "testLastname",
+        profile_image: "testImage"
+    });
+
+    data.save()
+    res.render("index")
+
 })
 
 app.get("/goh", (req, res) => {
@@ -82,44 +84,47 @@ app.get("/new_collection", function (req, res) {
         a = a + `${req.query[key]} <br>`
         console.log(req.query[key])
     }
-    // gohza.connect_db() เอา comment ออกด้วย
+
     res.send(`your input data is <br> ${a}`)
 
 
 })
 
-////////////////////////////////////
 app.get("/user/add", function (req, res) {
     res.render('addform')
 })
 
 app.post("/insert", upload.single('profile_image'), function (req, res) {
-    res.redirect('/user/add')
-    gohza.add_user(req.body.name, req.body.lastname, req.file.filename)
+    let data = new User({
+        name: req.body.name,
+        lastname: req.body.lastname,
+        profile_image: req.file.filename
+    });
+    data.save()
+
     console.log(req.file.filename)
-})
-////////////////////////////////////
 
-app.get("/user/:id", function (req, res) {
-    MongoClient.connect(url, async function (err, client) {
-        var dbo = client.db("mydb");
-        var dbdata = await dbo.collection("users").find({ _id: new mongodb.ObjectId(req.params.id) }).sort({ name: -1 }).toArray()
-        res.render("user", { data: dbdata })
-        console.log(dbdata)
-        client.close()
-    })
+    res.redirect('/user/add')
+})
+
+
+app.get("/user/:id", async function (req, res) {
+
+    User_data = await User.find({ _id: req.params.id })
+    res.render("user", { data: User_data })
 
 })
 
-app.get("/delete/:id", function (req, res) {
+app.get("/delete/:id", async function (req, res) {
     //ลบไฟล์ เพื่อทำให้ไม่เปลืองพื้นที่
     try {
         fs.unlinkSync(`./images/profiles/${req.query.profile_image}`)
-    } catch(err){
+    } catch (err) {
         console.log(err)
     }
     console.log(req.query.profile_image)
-    gohza.delete_user(req.params.id)
+
+    await User.findByIdAndDelete(req.params.id)
     res.redirect("/user")
 
 })
@@ -131,32 +136,37 @@ app.post("/user/edit", function (req, res) {
 
 })
 
-app.post("/update",upload.single('profile_image'), function (req, res) {
-    try{
+app.post("/update", upload.single('profile_image'), async function (req, res) {
+    try {
         var profile_image = req.file.filename
         try {
             fs.unlinkSync(`./images/profiles/${req.body.profile_image_old}`)
-        } catch(err){
+        } catch (err) {
             console.log(err)
         }
-        
-    }catch(err){
+
+    } catch (err) {
         console.log("you didn't change profile unage")
         var profile_image = req.body.profile_image_old
         console.log("old file is : " + profile_image)
     }
-    
- 
-    gohza.update_user(req.body, profile_image) //เปลี่ยนข้อมูลของ user
+
+    let data = ({
+        name: req.body.name,
+        lastname: req.body.lastname,
+        profile_image: profile_image
+    })
+    console.log(data)
+    await User.updateOne({ _id: req.body._id }, data)
+
     res.redirect("/user")
 })
 
-app.get("/about_me", (req,res) => {
+app.get("/about_me", (req, res) => {
     res.render("aboutMe")
 })
 
 app.listen(3000, () => {
     console.log("started server at port 3000 succeed")
-    console.log(__dirname, 'views')
     console.log("http://localhost:3000/")
 })
