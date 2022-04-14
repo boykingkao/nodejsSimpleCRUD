@@ -11,3 +11,7 @@
 
 ### ระบบอัพโหลดรูปภาพ
 
+## วิธีใช้งาน
+### เปิด terminal ที่มี current directory ของ folder นี้
+### พิมพ์คำสั่ง "npm start"
+### เข้า browser url : http://localhost:3000/
