@@ -25,9 +25,6 @@ const upload = multer({ storage: storage })
 
 const User = require("./users_mongo");
 
-
-//อ้างอิงตำแหน่งไฟล์
-const gohPage = path.join(__dirname, "./views/goh.html")
 //app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs')
 
@@ -57,18 +54,6 @@ app.get("/user", async function (req, res) {
     res.render("userList", { name: data })
 
     console.log("users list page")
-
-})
-
-app.get("/test", (req, res) => {
-    let data = new User({
-        name: "testName",
-        lastname: "testLastname",
-        profile_image: "testImage"
-    });
-
-    data.save()
-    res.render("index")
 
 })
 
